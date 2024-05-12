@@ -51,6 +51,13 @@ async function run() {
       const result = await serviceCollection.findOne(query);
       res.send(result);
   })
+
+  app.get('/bookedServices',async (req, res)=>{
+    const cursor = bookingCollection.find();
+    const result = await cursor.toArray();
+    res.send(result);
+})
+
   //  updating
   app.put('/services/:id', async(req, res) => {
     const id = req.params.id;
