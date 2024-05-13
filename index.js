@@ -94,6 +94,33 @@ async function run() {
     const result = await bookingCollection.insertOne(bookedService);
     res.send(result);
 })
+ app.get('/bookedServices',async (req, res)=>{
+    const cursor = bookingCollection.find();
+    const result = await cursor.toArray();
+    res.send(result);
+})
+  app.get('/bookedServices/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await bookingCollection.findOne(query);
+      res.send(result);
+  })
+app.patch('/bookedServices/:id', async(req, res) => {
+    const id = req.params.id;
+    const filter = {_id: new ObjectId(id)}
+    
+    const updateStatus = req.body;
+    console.log(updateStatus);
+  
+    const service = {
+        $set: {
+            serviceStatus: updateStatus.serviceStatus
+             
+        }
+    }
+    const result = await bookingCollection.updateOne(filter, service);
+    res.send(result);
+  })
 
 
     // Send a ping to confirm a successful connection
