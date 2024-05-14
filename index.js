@@ -1,13 +1,17 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const app = express();
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 // middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173','https://event-day-85cf9.firebaseapp.com', 'https://event-day-85cf9.web.app' ],
+  credentials: true
+}));
 app.use(express.json());
 
 
@@ -26,10 +30,12 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const serviceCollection = client.db('ServicesDB').collection('services');
     const bookingCollection = client.db('BookingsDB').collection('bookings');
+
+   
 
     app.post('/addService', async (req, res) => {
         const addedService = req.body;
@@ -110,7 +116,7 @@ app.patch('/bookedServices/:id', async(req, res) => {
     const filter = {_id: new ObjectId(id)}
     
     const updateStatus = req.body;
-    console.log(updateStatus);
+    
   
     const service = {
         $set: {
@@ -124,7 +130,7 @@ app.patch('/bookedServices/:id', async(req, res) => {
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
