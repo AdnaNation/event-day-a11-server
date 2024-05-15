@@ -9,7 +9,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // middleware
 app.use(cors({
-  origin: ['http://localhost:5173','https://event-day-85cf9.firebaseapp.com', 'https://event-day-85cf9.web.app' ],
+  origin: ['http://localhost:5173','https://event-day-85cf9.firebaseapp.com', 'https://event-day-85cf9.web.app'],
   credentials: true
 }));
 app.use(express.json());
@@ -45,7 +45,21 @@ async function run() {
     })
 
     app.get('/services',async (req, res)=>{
+        
+
         const cursor = serviceCollection.find();
+        const result = await cursor.toArray();
+        // console.log(result)
+        res.send(result);
+    })
+    app.get('/all-services',async (req, res)=>{
+        const filter = req.query;
+        // console.log(filter)
+        const query ={
+          serviceName: {$regex: filter.search , $options: 'i'} 
+        }
+
+        const cursor = serviceCollection.find(query);
         const result = await cursor.toArray();
         // console.log(result)
         res.send(result);
